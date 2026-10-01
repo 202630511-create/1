@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 학업 & 주간 라이프 플래너</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen text-slate-800 flex flex-col">
+
+    <!-- Top Header & Navigation Bar -->
+    <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- App Logo / Title -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('page-dashboard')">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500 text-white flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-calendar-check text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
+                            스마트 플래너 <span class="text-xs px-2 py-0.5 bg-brand-50 text-brand-600 border border-brand-200 rounded-full font-semibold">Pro</span>
+                        </h1>
+                        <p class="text-xs text-slate-500 hidden sm:block">시간표 + 숙제 자동 분배 & 여가시간 관리 시스템</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Tabs (5 Pages) -->
+                <nav class="hidden md:flex space-x-1 lg:space-x-2">
+                    <button onclick="switchPage('page-dashboard')" id="nav-page-dashboard"
+                        class="nav-btn px-3 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        <i class="fa-solid fa-chart-line text-xs"></i>
+                        <span>대시보드</span>
+                    </button>
+                    <button onclick="switchPage('page-timetable')" id="nav-page-timetable"
+                        class="nav-btn px-3 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        <i class="fa-solid fa-clock text-xs"></i>
+                        <span>고정 시간표</span>
+                    </button>
+                    <button onclick="switchPage('page-homework')" id="nav-page-homework"
+                        class="nav-btn px-3 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        <i class="fa-solid fa-book-open text-xs"></i>
+                        <span>숙제 & 할 일</span>
+                    </button>
+                    <button onclick="switchPage('page-planner')" id="nav-page-planner"
+                        class="nav-btn px-3 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                        <span>주간 플래너</span>
+                    </button>
+                    <button onclick="switchPage('page-counselor')" id="nav-page-counselor"
+                        class="nav-btn px-3 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        <i class="fa-solid fa-robot text-xs"></i>
+                        <span>AI 마음 상담소</span>
+                    </button>
+                </nav>
+
+                <!-- Quick Action Modal Counselor Trigger -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="switchPage('page-counselor')"
+                        class="bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center space-x-1.5">
+                        <i class="fa-solid fa-comments text-brand-200"></i>
+                        <span class="hidden sm:inline">AI 상담소 바로가기</span>
+                        <span class="sm:hidden">상담소</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Sub-bar -->
+        <div class="md:hidden border-t border-slate-100 bg-slate-50/80 px-2 py-1.5 flex justify-around overflow-x-auto text-xs">
+            <button onclick="switchPage('page-dashboard')" id="mob-nav-page-dashboard" class="mob-nav-btn px-2.5 py-1.5 rounded-lg font-medium text-slate-600 whitespace-nowrap">
+                <i class="fa-solid fa-chart-line mr-1"></i>대시보드
+            </button>
+            <button onclick="switchPage('page-timetable')" id="mob-nav-page-timetable" class="mob-nav-btn px-2.5 py-1.5 rounded-lg font-medium text-slate-600 whitespace-nowrap">
+                <i class="fa-solid fa-clock mr-1"></i>시간표
+            </button>
+            <button onclick="switchPage('page-homework')" id="mob-nav-page-homework" class="mob-nav-btn px-2.5 py-1.5 rounded-lg font-medium text-slate-600 whitespace-nowrap">
+                <i class="fa-solid fa-book-open mr-1"></i>숙제
+            </button>
+            <button onclick="switchPage('page-planner')" id="mob-nav-page-planner" class="mob-nav-btn px-2.5 py-1.5 rounded-lg font-medium text-slate-600 whitespace-nowrap">
+                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>플래너
+            </button>
+            <button onclick="switchPage('page-counselor')" id="mob-nav-page-counselor" class="mob-nav-btn px-2.5 py-1.5 rounded-lg font-medium text-slate-600 whitespace-nowrap">
+                <i class="fa-solid fa-robot mr-1"></i>상담소
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Body (5 Pages) -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- ==========================================
+             PAGE 1: 대시보드 & 종합 요약 (Dashboard)
+             ========================================== -->
+        <section id="page-dashboard" class="page-content space-y-6">
+            <!-- Hero Welcome Card -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs relative overflow-hidden">
+                <div class="max-w-2xl">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-600 border border-brand-200 mb-3">
+                        <i class="fa-solid fa-sparkles"></i> 오늘도 알찬 하루 만들기
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        학업과 여가의 완벽한 균형, 스마트 플래너 🤍
+                    </h2>
+                    <p class="mt-2 text-slate-600 text-sm sm:text-base leading-relaxed">
+                        등록된 고정 수업과 숙제 데이터를 바탕으로 효율적인 주간 라이프 스타일을 제안합니다. 지금 바로 대시보드 요약을 확인하거나 주간 플래너를 생성해보세요!
+                    </p>
+                    <div class="mt-5 flex flex-wrap gap-3">
+                        <button onclick="switchPage('page-planner')" class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>주간 플래너 생성하기</span>
+                        </button>
+                        <button onclick="switchPage('page-homework')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>숙제 추가하기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics Overview Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500">주간 수업/학원 시간</p>
+                        <h3 id="dashStatClass" class="text-2xl font-bold text-slate-900 mt-1">0 시간</h3>
+                        <p class="text-[11px] text-slate-400 mt-1">고정 시간표 등록 기준</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500">예상 할 일/숙제 시간</p>
+                        <h3 id="dashStatHw" class="text-2xl font-bold text-slate-900 mt-1">0 시간</h3>
+                        <p class="text-[11px] text-amber-600 font-medium mt-1" id="dashStatHwCount">남은 숙제 0개</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500">보장된 힐링 여가시간</p>
+                        <h3 id="dashStatLeisure" class="text-2xl font-bold text-emerald-600 mt-1">0 시간</h3>
+                        <p class="text-[11px] text-emerald-600 font-medium mt-1">여유로운 주말 보장</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500">숙제 달성률</p>
+                        <h3 id="dashStatProgress" class="text-2xl font-bold text-slate-900 mt-1">0%</h3>
+                        <p class="text-[11px] text-brand-600 font-medium mt-1" id="dashStatProgressSub">0 / 0 완료</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two Column Dashboard Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: Recent Homework Checklist Summary -->
+                <div class="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-base">진행 중인 숙제 리스트</h3>
+                        </div>
+                        <button onclick="switchPage('page-homework')" class="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+                            전체보기 <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                            <span>전체 이행도</span>
+                            <span id="dashProgressLabel">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div id="dashProgressBar" class="bg-brand-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div id="dashHomeworkList" class="space-y-2.5 flex-1 max-h-72 overflow-y-auto pr-1">
+                        <!-- JS injected -->
+                    </div>
+                </div>
+
+                <!-- Right: Quick Status & Advice -->
+                <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-4 pb-3 border-b border-slate-100">
+                            <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-base">오늘의 맞춤 라이프 가이드</h3>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed flex items-start space-x-2.5">
+                                <i class="fa-solid fa-check-circle text-emerald-500 text-sm mt-0.5"></i>
+                                <div>
+                                    <span class="font-bold text-slate-900 block mb-0.5">고정 일정 관리</span>
+                                    <span>학교 및 학원 시간표가 등록되어 있어 남은 여가 시간을 자동으로 산출할 수 있습니다.</span>
+                                </div>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed flex items-start space-x-2.5">
+                                <i class="fa-solid fa-fire text-amber-500 text-sm mt-0.5"></i>
+                                <div>
+                                    <span class="font-bold text-slate-900 block mb-0.5">우선순위 숙제 처리</span>
+                                    <span>급한 숙제부터 미리 해결하면 주말에 긴 힐링 타임을 누릴 수 있습니다!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 bg-slate-50 p-4 rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-800">스트레스 받거나 막힐 때는?</span>
+                            <button onclick="switchPage('page-counselor')" class="text-xs font-semibold bg-white border border-slate-200 text-brand-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                                AI 상담원 대화하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PAGE 2: 고정 시간표 관리 (Fixed Timetable)
+             ========================================== -->
+        <section id="page-timetable" class="page-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-brand-500"></i> 고정 시간표 관리 (학교 / 학원)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">매주 반복되는 정기적 수업 및 일정 데이터를 입력하고 변경해보세요.</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs text-slate-500 font-medium bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                        총 고정 수업: <strong id="timetableCount" class="text-slate-900">0개</strong>
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Add New Fixed Schedule Form Card -->
+                <div class="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-brand-500"></i> 고정 일정 추가
+                    </h3>
+
+                    <form id="scheduleForm" onsubmit="addSchedule(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">요일 선택</label>
+                            <select id="schedDay" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="월">월요일</option>
+                                <option value="화">화요일</option>
+                                <option value="수">수요일</option>
+                                <option value="목">목요일</option>
+                                <option value="금">금요일</option>
+                                <option value="토">토요일</option>
+                                <option value="일">일요일</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">수업 / 학원명</label>
+                            <input type="text" id="schedTitle" placeholder="예: 수학 학원, 학교 수업" required
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">시작 시간</label>
+                                <input type="time" id="schedStart" value="15:00" required
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">종료 시간</label>
+                                <input type="time" id="schedEnd" value="17:00" required
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-xl shadow-xs transition-all text-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>시간표 등록하기</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Schedule Grid / List Container -->
+                <div class="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-week text-brand-500"></i> 주간 고정 시간표 목록
+                        </span>
+                        <span class="text-xs text-slate-400 font-normal">월~일 요일별 보기</span>
+                    </h3>
+
+                    <!-- Day-by-day Timetable Cards -->
+                    <div id="timetableGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[500px] overflow-y-auto pr-1">
+                        <!-- JS Dynamically Injected -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PAGE 3: 숙제 & 할 일 관리 (Homework & Tasks)
+             ========================================== -->
+        <section id="page-homework" class="page-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-brand-500"></i> 숙제 & 할 일 관리
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">완료해야 하는 과제와 공부 항목을 등록하고 완료 여부를 체크해보세요.</p>
+                </div>
+                <!-- Filter buttons -->
+                <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <button onclick="setHwFilter('all')" id="hwFilter-all" class="hw-filter-btn px-3 py-1 text-xs font-semibold rounded-lg bg-white text-slate-900 shadow-xs">전체</button>
+                    <button onclick="setHwFilter('pending')" id="hwFilter-pending" class="hw-filter-btn px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900">진행중</button>
+                    <button onclick="setHwFilter('completed')" id="hwFilter-completed" class="hw-filter-btn px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900">완료됨</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Homework Registration Form Card -->
+                <div class="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-plus text-brand-500"></i> 새 숙제 등록
+                    </h3>
+
+                    <form id="homeworkForm" onsubmit="addHomework(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">숙제 / 과제 내용</label>
+                            <input type="text" id="hwTitle" placeholder="예: 영어 단어 30개 외우기, 수학 익힘책 5p" required
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">예상 소요 시간</label>
+                                <select id="hwHours" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="0.5">30분</option>
+                                    <option value="1" selected>1시간</option>
+                                    <option value="1.5">1시간 30분</option>
+                                    <option value="2">2시간</option>
+                                    <option value="3">3시간</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">우선순위</label>
+                                <select id="hwPriority" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="high">🔥 높음 (급함)</option>
+                                    <option value="medium" selected>⚡ 보통</option>
+                                    <option value="low">🌱 여유있음</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 rounded-xl shadow-xs transition-all text-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>숙제 목록 추가</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Homework List & Interactive Checklist -->
+                <div class="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-list-ul text-brand-500"></i> 숙제 체크리스트
+                        </h3>
+                        <span id="hwPageProgressText" class="text-xs font-bold text-brand-600 bg-brand-50 border border-brand-200 px-2.5 py-1 rounded-lg">
+                            달성률 0%
+                        </span>
+                    </div>
+
+                    <div id="homeworkPageList" class="space-y-2.5 flex-1 max-h-[480px] overflow-y-auto pr-1">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PAGE 4: 주간 자동 플래너 & 여가 분석 (Weekly Auto Planner)
+             ========================================== -->
+        <section id="page-planner" class="page-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-brand-500"></i> 주간 시간표 & 여가시간 자동 분석
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">고정 시간표와 숙제량을 바탕으로 여유 있는 주간 계획을 최적화하여 조율합니다.</p>
+                </div>
+                <button onclick="generateWeeklyPlan()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate text-xs"></i>
+                    <span>지금 자동 재조율하기</span>
+                </button>
+            </div>
+
+            <!-- Time Metrics Breakdown Bar -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+                <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-chart-pie text-brand-500"></i>
+                    <span>1주일(168시간) 시간 분배 요약</span>
+                </h3>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200">
+                        <span class="text-xs text-slate-500 font-medium block">수업/학원 시간</span>
+                        <span id="planStatClass" class="text-lg font-bold text-slate-900 mt-0.5 block">0 시간</span>
+                    </div>
+                    <div class="bg-amber-50/60 rounded-xl p-3.5 border border-amber-200/60">
+                        <span class="text-xs text-amber-700 font-medium block">총 숙제/공부 시간</span>
+                        <span id="planStatHw" class="text-lg font-bold text-amber-800 mt-0.5 block">0 시간</span>
+                    </div>
+                    <div class="bg-emerald-50/60 rounded-xl p-3.5 border border-emerald-200/60">
+                        <span class="text-xs text-emerald-700 font-medium block">🎉 확보된 여가시간</span>
+                        <span id="planStatLeisure" class="text-lg font-bold text-emerald-700 mt-0.5 block">0 시간</span>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200">
+                        <span class="text-xs text-slate-500 font-medium block">수면/기본 루틴</span>
+                        <span id="planStatSleep" class="text-lg font-bold text-slate-700 mt-0.5 block">84 시간</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7-Day Weekly Grid Container -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">완성된 1주일 라이프 스케줄</h3>
+                        <p class="text-xs text-slate-500">고정 수업, 숙제 배치시간 및 자유 여가시간의 황금 비율</p>
+                    </div>
+                    <span class="inline-flex items-center text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold px-2.5 py-1 rounded-full w-max">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                        최적화 자동 완료
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-3" id="weeklyGridContainer">
+                    <!-- JS Dynamically Populates Day Cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PAGE 5: AI 학업 & 마음 상담소 (AI Counselor)
+             ========================================== -->
+        <section id="page-counselor" class="page-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-brand-500"></i> AI 학업 & 마음 상담소
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">공부 스트레스, 시간 배분 고민, 슬럼프 등 마음 편하게 언제든 대화를 나눠보세요.</p>
+                </div>
+                <div class="flex items-center space-x-2 text-xs text-brand-600 bg-brand-50 border border-brand-200 px-3 py-1.5 rounded-xl font-medium">
+                    <i class="fa-solid fa-shield-heart text-sm"></i>
+                    <span>24시간 친절 1:1 멘토 지원</span>
+                </div>
+            </div>
+
+            <!-- Chat Application Card -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col h-[580px]">
+                <!-- Preset Quick Buttons Header -->
+                <div class="p-3 bg-slate-50 border-b border-slate-200 flex gap-2 overflow-x-auto">
+                    <span class="text-xs font-semibold text-slate-500 self-center whitespace-nowrap mr-1">💡 자주 묻는 질문:</span>
+                    <button onclick="sendQuickPrompt('숙제가 너무 많아서 시작하기 힘들어요 😭')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-3 py-1.5 rounded-xl border border-slate-200 shrink-0 transition-colors">
+                        😭 숙제가 많아 답답해요
+                    </button>
+                    <button onclick="sendQuickPrompt('쉬는 시간과 공부 시간을 어떻게 나눌까요?')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-3 py-1.5 rounded-xl border border-slate-200 shrink-0 transition-colors">
+                        ⏱️ 시간 나눔 팁
+                    </button>
+                    <button onclick="sendQuickPrompt('집중력이 떨어졌을 때 팁을 알려줘!')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-3 py-1.5 rounded-xl border border-slate-200 shrink-0 transition-colors">
+                        💡 집중력 향상
+                    </button>
+                    <button onclick="sendQuickPrompt('공부 슬럼프 극복하는 법 알려줘')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-3 py-1.5 rounded-xl border border-slate-200 shrink-0 transition-colors">
+                        🌱 슬럼프 극복
+                    </button>
+                </div>
+
+                <!-- Chat Messages Scroll Container -->
+                <div id="chatMessageHistory" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-white">
+                    <!-- Default Initial Greeting -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm shrink-0 shadow-xs">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="bg-slate-100 border border-slate-200 p-3.5 rounded-2xl rounded-tl-xs text-xs sm:text-sm text-slate-800 max-w-[85%] leading-relaxed">
+                            안녕하세요! 👋 저는 당신의 스마트 학습 멘토 AI입니다. <br>
+                            공부나 과제 때문에 부담되거나 시간 관리가 어렵다면 언제든 편하게 이야기를 들려주세요. 함께 해결방법을 찾아드릴게요!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Form -->
+                <form onsubmit="handleChatSubmit(event)" class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 flex items-center space-x-2">
+                    <input type="text" id="chatInput" placeholder="고민을 자유롭게 작성해보세요 (예: 수학 공부가 손에 안 잡혀요)..." 
+                        class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-2xs">
+                    <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-2.5 rounded-xl text-xs sm:text-sm transition-colors shadow-xs flex items-center space-x-1.5 shrink-0">
+                        <span>전송</span>
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-circle-info text-sky-400"></i>
+        <span id="toastMsg">알림 메시지</span>
+    </div>
+
+    <!-- Application JavaScript Code -->
+    <script>
+        // Global Application State
+        const DAYS = ['월', '화', '수', '목', '금', '토', '일'];
+        
+        let state = {
+            schedules: [
+                { id: 1, day: '월', title: '학교 수업', start: '09:00', end: '15:00' },
+                { id: 2, day: '화', title: '학교 수업', start: '09:00', end: '15:00' },
+                { id: 3, day: '수', title: '학교 수업', start: '09:00', end: '15:00' },
+                { id: 4, day: '목', title: '학교 수업', start: '09:00', end: '15:00' },
+                { id: 5, day: '금', title: '학교 수업', start: '09:00', end: '15:00' },
+                { id: 6, day: '월', title: '영어 학원', start: '16:00', end: '18:00' },
+                { id: 7, day: '수', title: '수학 학원', start: '16:00', end: '18:00' }
+            ],
+            homeworks: [
+                { id: 1, title: '영어 단어 30개 암기', hours: 1, priority: 'high', completed: false },
+                { id: 2, title: '수학 익힘책 5페이지 풀기', hours: 1.5, priority: 'medium', completed: false },
+                { id: 3, title: '과학 탐구 보고서 쓰기', hours: 2, priority: 'low', completed: false }
+            ],
+            hwFilter: 'all'
+        };
+
+        // DOM Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            switchPage('page-dashboard');
+            renderAllViews();
+        });
+
+        // Toast Helper
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // --- Page Navigation Switcher Logic ---
+        function switchPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(p => p.classList.add('hidden'));
+
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+
+            // Update Desktop Nav Styling
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+
+            const activeDesktopBtn = document.getElementById(`nav-${pageId}`);
+            if (activeDesktopBtn) {
+                activeDesktopBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                activeDesktopBtn.classList.add('bg-slate-900', 'text-white');
+            }
+
+            // Update Mobile Nav Styling
+            const mobBtns = document.querySelectorAll('.mob-nav-btn');
+            mobBtns.forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('text-slate-600');
+            });
+
+            const activeMobBtn = document.getElementById(`mob-${pageId}`);
+            if (activeMobBtn) {
+                activeMobBtn.classList.remove('text-slate-600');
+                activeMobBtn.classList.add('bg-slate-900', 'text-white');
+            }
+
+            // Refresh analytics and plan on view switch
+            renderAllViews();
+        }
+
+        // Master view renderer
+        function renderAllViews() {
+            renderTimetableGrid();
+            renderHomeworkPage();
+            generateWeeklyPlan();
+            renderDashboard();
+        }
+
+        // --- Timetable Management Logic ---
+        function addSchedule(e) {
+            e.preventDefault();
+            const day = document.getElementById('schedDay').value;
+            const title = document.getElementById('schedTitle').value.trim();
+            const start = document.getElementById('schedStart').value;
+            const end = document.getElementById('schedEnd').value;
+
+            if (start >= end) {
+                showToast('종료 시간은 시작 시간보다 뒤여야 합니다.');
+                return;
+            }
+
+            const newSched = { id: Date.now(), day, title, start, end };
+            state.schedules.push(newSched);
+            document.getElementById('schedTitle').value = '';
+
+            renderAllViews();
+            showToast(`[${day}요일] ${title} 일정이 추가되었습니다.`);
+        }
+
+        function deleteSchedule(id) {
+            state.schedules = state.schedules.filter(s => s.id !== id);
+            renderAllViews();
+            showToast('고정 일정이 삭제되었습니다.');
+        }
+
+        function renderTimetableGrid() {
+            const container = document.getElementById('timetableGrid');
+            document.getElementById('timetableCount').innerText = `${state.schedules.length}개`;
+
+            container.innerHTML = DAYS.map(d => {
+                const daySchedules = state.schedules.filter(s => s.day === d);
+                return `
+                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-200">
+                        <div class="font-bold text-xs text-slate-800 pb-2 border-b border-slate-200 flex items-center justify-between">
+                            <span>${d}요일</span>
+                            <span class="text-[10px] text-slate-400 font-normal">${daySchedules.length}개 수업</span>
+                        </div>
+                        <div class="space-y-1.5 mt-2">
+                            ${daySchedules.length === 0 ? '<p class="text-[11px] text-slate-400 py-1">일정 없음</p>' : ''}
+                            ${daySchedules.map(s => `
+                                <div class="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between text-xs">
+                                    <div class="truncate pr-1">
+                                        <div class="font-bold text-slate-900 truncate">${s.title}</div>
+                                        <div class="text-[10px] text-slate-500">${s.start}~${s.end}</div>
+                                    </div>
+                                    <button onclick="deleteSchedule(${s.id})" class="text-slate-400 hover:text-red-500 p-1">
+                                        <i class="fa-solid fa-xmark text-xs"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Homework Management Logic ---
+        function addHomework(e) {
+            e.preventDefault();
+            const title = document.getElementById('hwTitle').value.trim();
+            const hours = parseFloat(document.getElementById('hwHours').value);
+            const priority = document.getElementById('hwPriority').value;
+
+            const newHw = {
+                id: Date.now(),
+                title,
+                hours,
+                priority,
+                completed: false
+            };
+            state.homeworks.push(newHw);
+            document.getElementById('hwTitle').value = '';
+
+            renderAllViews();
+            showToast(`숙제 [${title}] 항목이 추가되었습니다.`);
+        }
+
+        function deleteHomework(id) {
+            state.homeworks = state.homeworks.filter(h => h.id !== id);
+            renderAllViews();
+            showToast('숙제가 삭제되었습니다.');
+        }
+
+        function toggleHwComplete(id) {
+            const target = state.homeworks.find(h => h.id === id);
+            if (target) {
+                target.completed = !target.completed;
+                renderAllViews();
+                if (target.completed) {
+                    showToast(`👏 '${target.title}' 숙제를 완료하셨습니다!`);
+                }
+            }
+        }
+
+        function setHwFilter(filter) {
+            state.hwFilter = filter;
+            const filterBtns = document.querySelectorAll('.hw-filter-btn');
+            filterBtns.forEach(b => {
+                b.classList.remove('bg-white', 'text-slate-900', 'shadow-xs');
+                b.classList.add('text-slate-600');
+            });
+            const activeBtn = document.getElementById(`hwFilter-${filter}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600');
+                activeBtn.classList.add('bg-white', 'text-slate-900', 'shadow-xs');
+            }
+            renderHomeworkPage();
+        }
+
+        function renderHomeworkPage() {
+            const container = document.getElementById('homeworkPageList');
+            let list = [...state.homeworks];
+
+            if (state.hwFilter === 'pending') list = list.filter(h => !h.completed);
+            if (state.hwFilter === 'completed') list = list.filter(h => h.completed);
+
+            const completedCount = state.homeworks.filter(h => h.completed).length;
+            const totalCount = state.homeworks.length;
+            const percent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
+
+            document.getElementById('hwPageProgressText').innerText = `달성률 ${percent}% (${completedCount}/${totalCount})`;
+
+            if (list.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">등록된 숙제가 없습니다.</p>`;
+                return;
+            }
+
+            const priorityBadge = (p) => {
+                if(p === 'high') return `<span class="bg-red-50 text-red-600 border border-red-200 text-[10px] px-2 py-0.5 rounded-full font-bold">높음</span>`;
+                if(p === 'medium') return `<span class="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] px-2 py-0.5 rounded-full font-bold">보통</span>`;
+                return `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] px-2 py-0.5 rounded-full font-bold">여유</span>`;
+            };
+
+            container.innerHTML = list.map(h => `
+                <div class="flex items-center justify-between p-3 rounded-xl border transition-all ${h.completed ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'}">
+                    <div class="flex items-center space-x-3 cursor-pointer flex-1" onclick="toggleHwComplete(${h.id})">
+                        <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${h.completed ? 'bg-brand-500 border-brand-500 text-white' : 'border-slate-300 bg-white'}">
+                            ${h.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            ${priorityBadge(h.priority)}
+                            <span class="text-xs font-semibold ${h.completed ? 'line-through text-slate-400' : 'text-slate-800'}">${h.title}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-[11px] text-slate-500 font-medium">${h.hours}시간 소요</span>
+                        <button onclick="deleteHomework(${h.id})" class="text-slate-400 hover:text-red-500 p-1">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Weekly Planner Calculation Logic ---
+        function generateWeeklyPlan() {
+            let classHoursTotal = 0;
+            state.schedules.forEach(s => {
+                const [startH, startM] = s.start.split(':').map(Number);
+                const [endH, endM] = s.end.split(':').map(Number);
+                const duration = (endH + endM/60) - (startH + startM/60);
+                if (duration > 0) classHoursTotal += duration;
+            });
+
+            let hwHoursTotal = state.homeworks.reduce((sum, h) => sum + h.hours, 0);
+            const sleepAndPersonalTotal = 84; 
+            const TOTAL_WEEK_HOURS = 168;
+
+            let leisureTotal = TOTAL_WEEK_HOURS - classHoursTotal - hwHoursTotal - sleepAndPersonalTotal;
+            if (leisureTotal < 0) leisureTotal = 0;
+
+            // Update Metrics Display
+            document.getElementById('planStatClass').innerText = `${classHoursTotal.toFixed(1)} 시간`;
+            document.getElementById('planStatHw').innerText = `${hwHoursTotal.toFixed(1)} 시간`;
+            document.getElementById('planStatLeisure').innerText = `${leisureTotal.toFixed(1)} 시간`;
+            document.getElementById('planStatSleep').innerText = `${sleepAndPersonalTotal} 시간`;
+
+            renderWeeklyGrid();
+        }
+
+        function renderWeeklyGrid() {
+            const container = document.getElementById('weeklyGridContainer');
+            
+            const dayMap = {};
+            DAYS.forEach(d => dayMap[d] = { classes: [], hwBlocks: [] });
+
+            state.schedules.forEach(s => {
+                if (dayMap[s.day]) dayMap[s.day].classes.push(s);
+            });
+
+            let unassignedHw = [...state.homeworks.filter(h => !h.completed)];
+            DAYS.forEach((d) => {
+                if (unassignedHw.length > 0) {
+                    const hwItem = unassignedHw.shift();
+                    if(hwItem) dayMap[d].hwBlocks.push(hwItem);
+                }
+            });
+
+            container.innerHTML = DAYS.map(day => {
+                const dayData = dayMap[day];
+                const isWeekend = day === '토' || day === '일';
+
+                return `
+                    <div class="bg-slate-50/70 rounded-xl p-3 border border-slate-200 flex flex-col h-full min-h-[200px]">
+                        <div class="text-center font-bold text-xs pb-2 border-b border-slate-200 ${isWeekend ? 'text-brand-600' : 'text-slate-800'} flex items-center justify-center space-x-1">
+                            <span>${day}요일</span>
+                            ${isWeekend ? '<i class="fa-solid fa-star text-[10px] text-amber-400"></i>' : ''}
+                        </div>
+
+                        <div class="space-y-2 mt-2 flex-1">
+                            ${dayData.classes.map(c => `
+                                <div class="bg-white p-2 rounded-lg border-l-4 border-slate-800 border-y border-r border-slate-200 shadow-2xs text-left">
+                                    <div class="text-[11px] font-bold text-slate-900 truncate">${c.title}</div>
+                                    <div class="text-[10px] text-slate-500"><i class="fa-regular fa-clock mr-1"></i>${c.start}~${c.end}</div>
+                                </div>
+                            `).join('')}
+
+                            ${dayData.hwBlocks.map(h => `
+                                <div class="bg-amber-50/80 p-2 rounded-lg border-l-4 border-amber-500 border-y border-r border-amber-200 shadow-2xs text-left">
+                                    <div class="text-[10px] text-amber-800 font-bold uppercase">✏️ 숙제 집중</div>
+                                    <div class="text-[11px] font-semibold text-slate-900 truncate">${h.title}</div>
+                                    <div class="text-[10px] text-amber-700">${h.hours}시간 배치</div>
+                                </div>
+                            `).join('')}
+
+                            <div class="bg-emerald-50/80 p-2 rounded-lg border-l-4 border-emerald-500 border-y border-r border-emerald-200 shadow-2xs text-left">
+                                <div class="text-[10px] text-emerald-800 font-bold">🎮 자유 여가시간</div>
+                                <div class="text-[10px] text-emerald-700">${isWeekend ? '자유시간 넉넉함 🎈' : '숙제 후 여가 보장 ☕'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Dashboard Render Logic ---
+        function renderDashboard() {
+            let classHoursTotal = 0;
+            state.schedules.forEach(s => {
+                const [startH, startM] = s.start.split(':').map(Number);
+                const [endH, endM] = s.end.split(':').map(Number);
+                const duration = (endH + endM/60) - (startH + startM/60);
+                if (duration > 0) classHoursTotal += duration;
+            });
+
+            let hwHoursTotal = state.homeworks.reduce((sum, h) => sum + h.hours, 0);
+            const pendingHw = state.homeworks.filter(h => !h.completed);
+            const completedCount = state.homeworks.filter(h => h.completed).length;
+            const totalCount = state.homeworks.length;
+            const percent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
+
+            const leisureTotal = Math.max(0, 168 - classHoursTotal - hwHoursTotal - 84);
+
+            document.getElementById('dashStatClass').innerText = `${classHoursTotal.toFixed(1)} 시간`;
+            document.getElementById('dashStatHw').innerText = `${hwHoursTotal.toFixed(1)} 시간`;
+            document.getElementById('dashStatHwCount').innerText = `남은 숙제 ${pendingHw.length}개`;
+            document.getElementById('dashStatLeisure').innerText = `${leisureTotal.toFixed(1)} 시간`;
+            document.getElementById('dashStatProgress').innerText = `${percent}%`;
+            document.getElementById('dashStatProgressSub').innerText = `${completedCount} / ${totalCount} 완료`;
+
+            document.getElementById('dashProgressLabel').innerText = `${percent}% 완료`;
+            document.getElementById('dashProgressBar').style.width = `${percent}%`;
+
+            // Render Dashboard Homework List
+            const dashHwListContainer = document.getElementById('dashHomeworkList');
+            if (state.homeworks.length === 0) {
+                dashHwListContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">등록된 숙제가 없습니다.</p>`;
+                return;
+            }
+
+            dashHwListContainer.innerHTML = state.homeworks.slice(0, 5).map(h => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl border ${h.completed ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200'}">
+                    <div class="flex items-center space-x-2.5 cursor-pointer" onclick="toggleHwComplete(${h.id})">
+                        <div class="w-4 h-4 rounded border flex items-center justify-center ${h.completed ? 'bg-brand-500 border-brand-500 text-white' : 'border-slate-300'}">
+                            ${h.completed ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                        </div>
+                        <span class="text-xs font-semibold ${h.completed ? 'line-through text-slate-400' : 'text-slate-800'}">${h.title}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-500 font-medium">${h.hours}시간</span>
+                </div>
+            `).join('');
+        }
+
+        // --- AI Counselor Chatbot Logic ---
+        function sendQuickPrompt(promptText) {
+            document.getElementById('chatInput').value = promptText;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('chatInput');
+            const userMsg = inputEl.value.trim();
+            if (!userMsg) return;
+
+            addChatMessage(userMsg, 'user');
+            inputEl.value = '';
+
+            setTimeout(() => {
+                const response = getAIResponse(userMsg);
+                addChatMessage(response, 'assistant');
+            }, 600);
+        }
+
+        function addChatMessage(text, role) {
+            const history = document.getElementById('chatMessageHistory');
+            const isUser = role === 'user';
+
+            const msgHtml = isUser ? `
+                <div class="flex items-start justify-end space-x-2">
+                    <div class="bg-slate-900 text-white p-3.5 rounded-2xl rounded-tr-xs text-xs sm:text-sm max-w-[85%] leading-relaxed shadow-xs">
+                        ${text}
+                    </div>
+                </div>
+            ` : `
+                <div class="flex items-start space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm shrink-0 shadow-xs">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-slate-100 border border-slate-200 p-3.5 rounded-2xl rounded-tl-xs text-xs sm:text-sm text-slate-800 max-w-[85%] leading-relaxed">
+                        ${text}
+                    </div>
+                </div>
+            `;
+
+            history.insertAdjacentHTML('beforeend', msgHtml);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        function getAIResponse(query) {
+            if (query.includes('많아') || query.includes('힘들어') || query.includes('답답')) {
+                return '숙제량이 많아 부담스러울 때는 큰 목표를 15분 단위로 작게 쪼개보세요. 딱 15분만 집중하고 5분 쉬는 "뽀모도로 기법"을 활용하면 부담감이 훨씬 줄어듭니다! 🌱';
+            }
+            if (query.includes('시간') || query.includes('나눌')) {
+                return '효과적인 시간 관리를 위해서는 학교/학원 직후 가장 부담되는 숙제를 1시간 안에 먼저 끝내는 것이 좋습니다. 저녁 시간 이후를 온전한 여가시간으로 활용해보세요! ⏱️';
+            }
+            if (query.includes('집중') || query.includes('졸려')) {
+                return '집중력이 떨어졌을 땐 스마트폰을 멀리 두고, 시원한 물 한 잔을 마시며 가볍게 1분 동안 스트레칭을 해주세요. 신선한 공기를 마시면 моз뇌가 다시 활성화됩니다! 💡';
+            }
+            if (query.includes('슬럼프')) {
+                return '슬럼프는 완벽하게 하려는 마음이 클 때 자주 옵니다. 오늘은 50%만 목표로 잡고 작은 것부터 하나씩 완료해보세요. 작은 성공 경험이 마음을 다시 튼튼하게 만들어줄 거예요! ✨';
+            }
+            return `좋은 고민입니다! 계획표와 대시보드를 기반으로 하나씩 차근차근 해결해나가다 보면 훨씬 더 여유롭고 알찬 일상을 만드실 수 있을 거예요. 언제든 도움을 요청하세요! 😊`;
+        }
+    </script>
+</body>
+</html>
